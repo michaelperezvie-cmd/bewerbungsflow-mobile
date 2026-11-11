@@ -7,7 +7,8 @@ Modell-API, API-Schlüssel, Datenbank oder Zahlungsfunktion.
 ## Ablauf
 
 1. Vollständige Stellenanzeige einfügen.
-2. Den vorbereiteten Prompt kopieren und das jeweilige Plugin öffnen.
+2. Direkt unter der Stellenanzeige „Bewerbung starten“ tippen. Der Prompt wird
+   kopiert und der nächste offene Schritt angezeigt. Dort „ChatGPT öffnen“ tippen.
 3. In ChatGPT einen neuen Chat mit dem Plugin starten, Prompt einfügen und die
    Antwort generieren lassen.
 4. Die vollständige Antwort zurück in BewerbungsFlow einsetzen und übernehmen.
@@ -79,3 +80,8 @@ Die automatisierten Tests liegen im ursprünglichen Arbeitsverzeichnis unter
 Dreischritt, lokales Speichern, Wiederöffnen im Verlauf, Kopieren und Bearbeiten,
 die Reihenfolge, geänderte Eingaben und den Sicherungsimport. Zusätzliche
 Browserprüfungen erfolgen bei iPhone-typischen Bildschirmgrößen.
+
+Version 1.0.3 ergänzt den Startknopf direkt unter dem Stellenanzeigenfeld.
+Bereits übernommene Antworten bleiben beim Fortsetzen erhalten.
+Scripts und Styles verwenden eine Versionskennung im Pfad, damit beim
+Neuladen auch mit einem älteren Offline-Cache die passende Oberfläche lädt.

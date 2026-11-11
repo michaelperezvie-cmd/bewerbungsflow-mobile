@@ -1,5 +1,5 @@
-const CACHE='bewerbungsflow-mobile-1.0.2';
-const FILES=['./','./index.html','./style.css','./core.js','./mobile-core.js','./storage.js','./app.js','./manifest.webmanifest','./icon.svg','./icon-180.png','./icon-192.png','./icon-512.png'];
+const CACHE='bewerbungsflow-mobile-1.0.3';
+const FILES=['./','./index.html','./style.css?v=1.0.3','./core.js?v=1.0.3','./mobile-core.js?v=1.0.3','./storage.js?v=1.0.3','./app.js?v=1.0.3','./manifest.webmanifest','./icon.svg','./icon-180.png','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('bewerbungsflow-mobile-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting();});

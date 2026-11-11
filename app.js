@@ -32,6 +32,10 @@
     $('status-title').textContent=complete?'Dein Anschreiben ist bereit':!session.job?'Bereit für deine nächste Bewerbung':'Schritt '+(activeStep+1)+' von 3 · '+M.names[activeStep];
     $('status-description').textContent=complete?'Du kannst es prüfen, bearbeiten, teilen und speichern.':!session.job?'Füge zuerst eine Stellenanzeige ein.':session.job.trim().length<30?'Bitte die vollständige Stellenanzeige einfügen (mindestens 30 Zeichen).':step.draft!==step.output?'Deine eingefügte Antwort ist als Entwurf gesichert. Bitte noch übernehmen.':step.phase==='awaiting'?'Warte auf deine Antwort aus ChatGPT. Danach hier einfügen.':step.phase==='copied'?'Prompt kopiert. Öffne jetzt das passende Plugin in ChatGPT.':'Kopiere den Prompt und öffne das passende Plugin in ChatGPT.';
     $('job-count').textContent=session.job.length.toLocaleString('de-AT')+' Zeichen';
+    const canStart=complete||M.unlocked(session,0),hasAnswers=session.steps.some(x=>x.output);
+    $('start-flow').disabled=!canStart;
+    $('start-flow').textContent=complete?'Anschreiben ansehen →':hasAnswers?'Bewerbung fortsetzen →':'Bewerbung starten →';
+    $('start-hint').textContent=complete?'Dein Anschreiben ist fertig. Öffne es zum Prüfen und Speichern.':!canStart?'Füge eine vollständige Stellenanzeige ein (mindestens 30 Zeichen). Dann kannst du starten.':'Der Start kopiert den Prompt für den nächsten offenen Schritt. Öffne danach ChatGPT und füge ihn dort in einen neuen Chat ein.';
     show('changed-warning',session.steps.some((_,i)=>M.stale(session,i)));
     for(let i=0;i<3;i++){
       const b=$('step-'+i),ok=M.valid(session,i),old=M.stale(session,i);b.disabled=i>0&&!M.unlocked(session,i)&&!session.steps[i].output;
@@ -82,7 +86,21 @@
   for(const [id,key] of [['application-title','title'],['company','company'],['job','job'],['notes','notes']])$(id).addEventListener('input',()=>{session[key]=$(id).value;if(key==='job'||key==='notes')session.importedFinal=false;M.refresh(session);showResult=false;renderStatus();renderResult();$('copy-prompt').disabled=!M.unlocked(session,activeStep);$('save-answer').disabled=!M.unlocked(session,activeStep);$('save-plain').disabled=!M.unlocked(session,activeStep);$('open-plugin').setAttribute('aria-disabled',String(!M.unlocked(session,activeStep)));$('generated-prompt').value=M.unlocked(session,activeStep)?M.prompt(session,activeStep):'Bitte zuerst die vorherigen Schritte übernehmen.';schedule();});
   $('answer').addEventListener('input',()=>{session.steps[activeStep].draft=$('answer').value;M.refresh(session);outputError='';show('answer-error',false);renderStatus();schedule();});
   for(const b of document.querySelectorAll('[data-step]'))b.addEventListener('click',async()=>{try{await flush();activeStep=Number(b.dataset.step);session.current=activeStep;showResult=false;outputError='';renderStatus();renderStep();renderResult();scrollTo('step-panel');}catch(e){report(e);}});
-  on('copy-prompt',async()=>{const id=session.id,index=activeStep,previous=session.steps[index].output,text=M.prompt(session,index);await copy(text,$('generated-prompt'));if(session.id===id&&activeStep===index&&session.steps[index].output===previous){session.steps[index].phase='copied';session.current=index;M.refresh(session);await persist();renderStatus();}toast('Prompt kopiert. Öffne jetzt das Plugin in ChatGPT.');});
+  async function copyCurrentPrompt(){
+    const id=session.id,index=activeStep,previous=session.steps[index].output,basis=M.basis(session,index),text=M.prompt(session,index);
+    await copy(text,$('generated-prompt'));
+    if(session.id!==id||activeStep!==index||M.basis(session,index)!==basis||session.steps[index].output!==previous)return false;
+    session.steps[index].phase='copied';session.current=index;M.refresh(session);await persist();renderStatus();
+    toast('Prompt kopiert. Tippe jetzt auf „ChatGPT öffnen“ und füge ihn dort ein.');return true;
+  }
+  on('copy-prompt',copyCurrentPrompt);
+  on('start-flow',async()=>{
+    if(M.status(session)==='done'){showResult=true;renderStatus();renderResult();scrollTo('result-panel');$('result-heading').focus({preventScroll:true});return;}
+    if(!M.unlocked(session,0)){toast('Bitte die vollständige Stellenanzeige einfügen (mindestens 30 Zeichen).');return;}
+    activeStep=session.steps.findIndex((x,i)=>!M.valid(session,i)||x.draft.trim()!==x.output.trim());if(activeStep<0)activeStep=2;
+    session.current=activeStep;showResult=false;outputError='';render();scrollTo('step-panel');$('step-heading').focus({preventScroll:true});
+    if(await copyCurrentPrompt())$('open-plugin').focus({preventScroll:true});
+  });
   $('open-plugin').addEventListener('click',e=>{if(!M.unlocked(session,activeStep)){e.preventDefault();toast('Bitte zuerst die vorherigen Schritte übernehmen.');return;}session.steps[activeStep].phase='awaiting';session.current=activeStep;M.refresh(session);renderStatus();persist().catch(()=>{});});
   on('paste-answer',async()=>{if(!navigator.clipboard?.readText){$('answer').focus();toast('Im Antwortfeld gedrückt halten und „Einfügen“ wählen.');return;}try{$('answer').value=await navigator.clipboard.readText();$('answer').dispatchEvent(new Event('input',{bubbles:true}));toast('Antwort eingefügt. Bitte noch übernehmen.');}catch{$('answer').focus();toast('Bitte im Antwortfeld gedrückt halten und „Einfügen“ wählen.');}});
   async function accept(plain=false){

@@ -8,3 +8,5 @@
 .history-row{display:flex;align-items:center;gap:2px}.history-row .history-item{flex:1;min-width:0}.archive-record{min-width:32px;min-height:44px;border:0;background:transparent;color:#94a385;font-size:17px}.link-button[aria-disabled=true]{opacity:.45;cursor:not-allowed}.step-panel,.result-panel{scroll-margin-top:185px}
 
 @media(max-width:760px){.archive-record{min-width:44px}.archive-toggle,.prompt-details summary{min-height:44px}.prompt-details textarea{font-size:16px}}
+
+.start-actions{margin:0 0 22px}.start-actions .primary{font-size:15px;min-height:52px;font-weight:600}.start-hint{margin:10px 0 0;color:#64795a;font-size:12px;line-height:1.75}
