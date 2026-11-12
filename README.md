@@ -1,5 +1,23 @@
 # BewerbungsFlow · Mobil
 
+Die mobile Website ist seit Version 1.1.0 der Einstieg in den automatischen
+BewerbungsFlow in ChatGPT. Der prominente Startlink öffnet das private Plugin:
+
+https://chatgpt.com/plugins/plugins_6af4d333c490819190b0176777f9fbf2
+
+Dort „Im Chat ausprobieren“ antippen und die Stellenanzeige einmal senden.
+Analyse, CV-Abgleich und Anschreiben laufen in einem Chat ohne Zwischenkopieren.
+Der erzeugte Übergabelink öffnet das fertige Ergebnis direkt im Bewerbungs-Assistenten.
+Der Mac kann ausgeschaltet sein. Der bestehende ChatGPT-Tarif und dessen Limits gelten.
+CV und persönliche Unterlagen sind ausschließlich im privaten Plugin enthalten.
+Sie werden nicht in diesem öffentlichen Repository bereitgestellt.
+
+Bisherige manuelle Entwürfe sind weiter über Menü und den eingeklappten manuellen
+Bereich zugänglich. Sicherung und Import bleiben erhalten. Die frühere technische
+Dokumentation beschreibt diesen weiterhin verfügbaren manuellen Modus:
+
+## Manueller Modus
+
 Eine statische iPhone-Website für den manuellen Ablauf mit den drei vorhandenen
 ChatGPT-Plugins. Sie funktioniert ohne eingeschalteten Mac und benötigt keine
 Modell-API, API-Schlüssel, Datenbank oder Zahlungsfunktion.

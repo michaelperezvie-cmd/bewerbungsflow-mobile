@@ -64,8 +64,8 @@
     if(r){$('edit-subject').value=r.subject;$('edit-salutation').value=r.salutation;$('edit-body').value=r.bodyParagraphs.join('\n\n');$('edit-closing').value=r.closing;}else $('edit-plain').value=session.letter;
   }
   function render(){setFields();renderStatus();renderStep();renderResult();renderHistory();}
-  function scrollTo(id){try{$(id).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}catch{}}
-  async function choose(id){await flush();const found=records.find(x=>x.id===id);if(!found)return;session=structuredClone(found);activeStep=Math.min(session.current,2);showResult=M.status(session)==='done';outputError='';remember();render();$('history-drawer').close();scrollTo('main');}
+  function scrollTo(id){try{const manual=$('manual-workflow');if(manual?.contains($(id)))manual.open=true;$(id).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}catch{}}
+  async function choose(id){await flush();const found=records.find(x=>x.id===id);if(!found)return;session=structuredClone(found);activeStep=Math.min(session.current,2);showResult=M.status(session)==='done';outputError='';remember();render();$('manual-workflow').open=true;$('history-drawer').close();scrollTo('manual-workflow');}
   async function newApplication(){await flush();session=M.create();activeStep=0;showResult=false;outputError='';render();$('save-state').textContent='Noch kein Entwurf';$('history-drawer').close();scrollTo('job-heading');$('job').focus();}
   async function copy(text,field){
     if(navigator.clipboard?.writeText){try{await navigator.clipboard.writeText(text);return;}catch{}}
